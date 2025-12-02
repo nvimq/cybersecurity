@@ -1,0 +1,22 @@
+FROM kalilinux/kali-rolling
+
+# Обновляем пакеты и ставим базовые инструменты для пентеста
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y \
+      iproute2 \
+      inetutils-ping \
+      net-tools \
+      dnsutils \
+      nmap \
+      gobuster \
+      ffuf \
+      sqlmap \
+      curl \
+      git && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Рабочая директория и папка под лут
+WORKDIR /root
+RUN mkdir -p /root/loot
+
