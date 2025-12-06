@@ -12,11 +12,15 @@ RUN apt update && \
       ffuf \
       sqlmap \
       curl \
-      git && \
+      git \
+      tcpdump \
+      traceroute \
+      netcat-traditional \
+      iputils-tracepath \
+      ca-certificates && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Рабочая директория и папка под лут
 WORKDIR /root
 RUN mkdir -p /root/loot
 

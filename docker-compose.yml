@@ -45,6 +45,37 @@ services:
     networks:
       - labnet
 
+  # bWAPP — ещё одна классическая уязвимая PHP-лабка (OWASP bWAPP) [web:86][web:94]
+  bwapp:
+    image: raesene/bwapp
+    platform: linux/amd64
+    container_name: bwapp
+    ports:
+      - "8083:80"
+    networks:
+      - labnet
+
+  # WebGoat 8 (Java) — тренажёр по уязвимостям в стиле OWASP Top 10 [web:81][web:84][web:88]
+  webgoat:
+    image: webgoat/webgoat-8.0
+    platform: linux/amd64
+    container_name: webgoat
+    ports:
+      - "8082:8080"
+    networks:
+      - labnet
+
+  # OWASP Security Shepherd — тяжёлый, но мощный тренажёр (можно выключать при необходимости) [web:76][web:87][web:90]
+  security-shepherd:
+    image: owasp/security-shepherd:latest
+    platform: linux/amd64
+    container_name: security-shepherd
+    ports:
+      - "8085:80"
+    networks:
+      - labnet
+
+  # Kali-основа с основным набором CLI-инструментов (собирается локально под arm64)
   kali:
     build:
       context: .
@@ -53,12 +84,25 @@ services:
     tty: true
     stdin_open: true
     working_dir: /root
-    command: tail -f /dev/null
+    command: sleep infinity
     volumes:
       - ./loot:/root/loot
     networks:
       labnet:
         ipv4_address: 172.20.0.10
+
+  # Дополнительный лёгкий tools-контейнер (если хочешь не загрязнять основной Kali)
+  tools:
+    image: kalilinux/kali-rolling
+    container_name: pentest-tools
+    tty: true
+    stdin_open: true
+    working_dir: /root
+    command: sleep infinity
+    networks:
+      - labnet
+    volumes:
+      - ./loot:/root/loot
 
 networks:
   labnet:
@@ -66,4 +110,3 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
-

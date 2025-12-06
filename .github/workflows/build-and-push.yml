@@ -16,15 +16,16 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     strategy:
       matrix:
         dockerfile:
           - name: kali-pentest
             file: Dockerfile.kali
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout repository
@@ -40,12 +41,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push multi-arch image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./${{ matrix.dockerfile.file }}
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.dockerfile.name }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.dockerfile.name }}:${{ github.sha }}
